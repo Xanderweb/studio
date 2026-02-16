@@ -1,102 +1,64 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import Logo from '@/components/Logo';
-
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
-});
+import { Card, CardContent } from '@/components/ui/card';
+import { ShieldCheck, CalendarClock, ChevronRight } from 'lucide-react';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: 'agent@claimflow.ai',
-      password: 'password123',
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
-    router.push('/dashboard');
-  }
-
   return (
-    <div className="w-full min-h-screen flex items-center justify-center p-6">
-       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background">
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      </div>
       
-      <div className="mx-auto grid w-[420px] gap-8">
-        <div className="grid gap-4 text-center">
-            <div className="flex justify-center items-center gap-4 mb-4">
-              <Logo className="h-12 w-12 text-primary" />
-              <h1 className="text-6xl font-bold font-headline glitch" data-text="ClaimFlow">ClaimFlow</h1>
-            </div>
-            <p className="text-balance text-lg text-muted-foreground">
-              Insurance Reimagined as a Premium Digital Experience.
-            </p>
-        </div>
-          
-        <div className="relative rounded-3xl p-8 bg-card/80 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/20">
-            <h2 className="text-3xl font-bold font-headline text-center mb-2">Agent Access</h2>
-            <p className="text-muted-foreground text-center mb-8">Enter your credentials to begin.</p>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="name@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="••••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" variant="primary" size="lg" className="w-full">
-                  Authorize
-                </Button>
-              </form>
-            </Form>
-            <div className="mt-6 text-center text-sm">
-              <Link href="#" className="underline font-semibold text-primary/80 hover:text-primary">
-                Forgot Password?
-              </Link>
+      <main className="z-10 flex flex-col items-center justify-center gap-8 max-w-2xl mx-auto">
+          <h2 className="text-xl font-bold text-primary tracking-widest uppercase">
+            ClaimFlow AI
+          </h2>
+          <h1 className="text-5xl md:text-7xl font-bold font-headline leading-tight">
+            Effortless Claims,
+            <br />
+            Powerful Outcomes.
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-md">
+            Smart, simple, and secure. AI-powered insurance claims processing starts here.
+          </p>
+        
+        <div className="relative my-8">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="relative w-40 h-40 bg-card rounded-full flex items-center justify-center shadow-2xl shadow-primary/20">
+                <div className="w-32 h-32 bg-background rounded-full flex items-center justify-center">
+                    <Logo className="w-16 h-16 text-primary" />
+                </div>
             </div>
         </div>
 
-      </div>
+        <div className="grid md:grid-cols-2 gap-6 w-full max-w-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50 text-left">
+                <CardContent className="pt-6">
+                    <ShieldCheck className="w-8 h-8 text-primary mb-3"/>
+                    <h3 className="font-bold text-lg">Instant Analysis</h3>
+                    <p className="text-muted-foreground text-sm">AI-driven damage and fraud detection in seconds.</p>
+                </CardContent>
+            </Card>
+            <Card className="bg-card/80 backdrop-blur-sm border-border/50 text-left">
+                <CardContent className="pt-6">
+                    <CalendarClock className="w-8 h-8 text-primary mb-3"/>
+                    <h3 className="font-bold text-lg">Guided Process</h3>
+                    <p className="text-muted-foreground text-sm">Our chatbot guides you through every step of the claim.</p>
+                </CardContent>
+            </Card>
+        </div>
+        
+        <Button variant="primary" size="lg" className="w-full max-w-sm mt-8 group" asChild>
+          <Link href="/dashboard">
+            Get Started
+            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </Button>
+      </main>
     </div>
   );
 }
