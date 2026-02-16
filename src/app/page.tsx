@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,8 +16,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Logo from '@/components/Logo';
 
 const loginSchema = z.object({
@@ -36,96 +33,69 @@ export default function LoginPage() {
     },
   });
 
-  const heroImage = PlaceHolderImages.find(p => p.id === 'landing-hero');
-
   function onSubmit(values: z.infer<typeof loginSchema>) {
     console.log(values);
     router.push('/dashboard');
   }
 
   return (
-    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="flex items-center justify-center p-6 sm:p-12">
-        <div className="mx-auto grid w-[380px] gap-8">
-          <div className="grid gap-2 text-center">
-            <div className="flex justify-center items-center gap-3 mb-4">
-              <Logo className="h-10 w-10 text-primary" />
-              <h1 className="text-4xl font-bold font-headline">ClaimFlow AI</h1>
+    <div className="w-full min-h-screen flex items-center justify-center p-6">
+       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+      
+      <div className="mx-auto grid w-[420px] gap-8">
+        <div className="grid gap-4 text-center">
+            <div className="flex justify-center items-center gap-4 mb-4">
+              <Logo className="h-12 w-12 text-primary" />
+              <h1 className="text-6xl font-bold font-headline glitch" data-text="ClaimFlow">ClaimFlow</h1>
             </div>
-            <p className="text-balance text-muted-foreground text-lg">
-              Streamline your insurance claims with the power of AI.
+            <p className="text-balance text-lg text-muted-foreground">
+              Insurance Reimagined as a Premium Digital Experience.
             </p>
-          </div>
-          
-          <Card className="rounded-2xl">
-            <CardHeader>
-              <CardTitle className="text-2xl font-headline">Sign In</CardTitle>
-              <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                         <div className="flex items-center">
-                          <FormLabel>Password</FormLabel>
-                          <Link
-                            href="#"
-                            className="ml-auto inline-block text-sm underline"
-                          >
-                            Forgot your password?
-                          </Link>
-                        </div>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" variant="primary" size="lg" className="w-full">
-                    Login
-                  </Button>
-                </form>
-              </Form>
-              <div className="mt-6 text-center text-sm">
-                Don&apos;t have an account?{' '}
-                <Link href="#" className="underline font-semibold text-primary">
-                  Sign up
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
         </div>
-      </div>
-      <div className="hidden bg-muted lg:block relative">
-        {heroImage && (
-          <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            data-ai-hint={heroImage.imageHint}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-         <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
+          
+        <div className="relative rounded-3xl p-8 bg-card/80 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/20">
+            <h2 className="text-3xl font-bold font-headline text-center mb-2">Agent Access</h2>
+            <p className="text-muted-foreground text-center mb-8">Enter your credentials to begin.</p>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="sr-only">Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="name@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="sr-only">Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="••••••••" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" variant="primary" size="lg" className="w-full">
+                  Authorize
+                </Button>
+              </form>
+            </Form>
+            <div className="mt-6 text-center text-sm">
+              <Link href="#" className="underline font-semibold text-primary/80 hover:text-primary">
+                Forgot Password?
+              </Link>
+            </div>
+        </div>
+
       </div>
     </div>
   );

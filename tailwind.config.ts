@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['"Sora"', 'sans-serif'],
-        headline: ['"Poppins"', 'sans-serif'],
+        body: ['"Satoshi"', 'sans-serif'],
+        headline: ['"Syne"', 'sans-serif'],
         code: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
@@ -46,26 +46,19 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         success: {
-          DEFAULT: 'hsl(var(--success-fg))',
+          DEFAULT: 'hsl(var(--success))',
         },
         warning: {
-          DEFAULT: 'hsl(var(--warning-fg))',
+          DEFAULT: 'hsl(var(--warning))',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
-        },
       },
       borderRadius: {
-        lg: 'var(--radius)', /* 20px */
-        md: 'calc(var(--radius) - 4px)', /* 16px */
-        sm: 'calc(var(--radius) - 8px)', /* 12px */
+        lg: 'var(--radius)', /* 24px */
+        md: 'calc(var(--radius) - 8px)', /* 16px */
+        sm: 'calc(var(--radius) - 12px)', /* 12px */
       },
       boxShadow: {
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
@@ -88,10 +81,33 @@ export default {
             height: '0',
           },
         },
+        'rotate-gradient': {
+          '0%': { filter: 'hue-rotate(0deg)' },
+          '100%': { filter: 'hue-rotate(360deg)' },
+        },
+         'glitch-anim-1': {
+          '0%': { clipPath: 'inset(12% 0 85% 0)' },
+          '20%': { clipPath: 'inset(58% 0 13% 0)' },
+          '40%': { clipPath: 'inset(36% 0 42% 0)' },
+          '60%': { clipPath: 'inset(70% 0 5% 0)' },
+          '80%': { clipPath: 'inset(95% 0 2% 0)' },
+          '100%': { clipPath: 'inset(48% 0 48% 0)' },
+        },
+        'glitch-anim-2': {
+          '0%': { clipPath: 'inset(78% 0 2% 0)' },
+          '20%': { clipPath: 'inset(5% 0 90% 0)' },
+          '40%': { clipPath: 'inset(82% 0 1% 0)' },
+          '60%': { clipPath: 'inset(42% 0 53% 0)' },
+          '80%': { clipPath: 'inset(18% 0 78% 0)' },
+          '100%': { clipPath: 'inset(92% 0 5% 0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'rotate-gradient': 'rotate-gradient 3s linear infinite',
+        'glitch-1': 'glitch-anim-1 2s infinite linear alternate-reverse',
+        'glitch-2': 'glitch-anim-2 2s infinite linear alternate-reverse',
       },
     },
   },

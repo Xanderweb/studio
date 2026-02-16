@@ -24,18 +24,18 @@ export default function Dashboard() {
         description="Review your recent insurance claims."
       >
         <Button variant="primary" size="lg" asChild>
-            <Link href="/new-claim">File a New Claim</Link>
+            <Link href="/new-claim">File New Claim</Link>
         </Button>
       </PageHeader>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {mockClaims.map((claim) => (
-            <Card key={claim.id} className="bg-card/60 dark:bg-card/60 border-border/50 backdrop-blur-xl shadow-glass transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-hover h-full flex flex-col">
+            <Card key={claim.id} className="claim-card h-full flex flex-col">
               <CardHeader>
                   <div className="flex justify-between items-start gap-2">
                       <CardTitle className="text-lg font-semibold font-headline">Claim #{claim.id.split('_')[1]}</CardTitle>
                       <Badge variant={statusVariant[claim.status]}>{claim.status}</Badge>
                   </div>
-                  <CardDescription className="text-xs">{claim.incidentDate ? format(claim.incidentDate, 'PPP') : 'N/A'}</CardDescription>
+                  <CardDescription className="text-xs text-muted-foreground">{claim.incidentDate ? format(claim.incidentDate, 'PPP') : 'N/A'}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
                   <p className="text-sm text-muted-foreground line-clamp-2">{claim.description}</p>

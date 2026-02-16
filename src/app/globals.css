@@ -4,65 +4,44 @@
 
 @layer base {
   :root {
-    --background: 210 25% 98%; /* #FAFBFC */
-    --foreground: 213 17% 10%; /* #0F1419 */
+    /* Base - Deep Space */
+    --background: 15 28% 6%; /* #0A0E27; */
+    --foreground: 220 14% 96%; /* #F8F9FF */
 
-    --card: 0 0% 100%;
-    --card-foreground: 213 17% 10%;
+    --card: 228 44% 16%; /* #151B3B */
+    --card-foreground: 220 14% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 213 17% 10%;
+    --popover: 228 44% 16%;
+    --popover-foreground: 220 14% 96%;
 
-    --primary: 212 86% 55%; /* #2D89EF */
-    --primary-foreground: 210 20% 98%;
+    /* Electric Accents */
+    --primary: 182 100% 50%; /* #00F5FF Electric Cyan */
+    --primary-foreground: 232 71% 11%; /* #0A0E27 */
 
-    --secondary: 213 27% 90%; /* #E8ECF0 */
-    --secondary-foreground: 213 17% 10%;
+    --secondary: 300 100% 50%; /* #FF00FF Electric Magenta */
+    --secondary-foreground: 220 14% 96%;
 
-    --muted: 213 27% 90%;
-    --muted-foreground: 215 16% 47%; /* #667085 */
-    
-    --accent: 12 100% 64%; /* #FF6B47 */
-    --accent-foreground: 210 20% 98%;
+    --muted: 227 41% 21%; /* #1E2749 */
+    --muted-foreground: 220 13% 65%; /* #A0AEC0 */
 
-    --destructive: 0 84% 60%; /* #EF4444 */
-    --destructive-foreground: 210 20% 98%;
+    --accent: 51 100% 50%; /* #FFD700 Electric Gold */
+    --accent-foreground: 232 71% 11%;
 
-    --border: 213 27% 90%; /* #E8ECF0 */
-    --input: 213 27% 90%;
-    --ring: 212 86% 55%;
+    --destructive: 339 100% 50%; /* #FF0055 Danger Red */
+    --destructive-foreground: 220 14% 96%;
 
-    --radius: 1.25rem; /* 20px */
-    
-    --success-fg: 145 63% 42%; /* #10B981 */
-    --warning-fg: 38 92% 53%; /* #F59E0B */
-    --danger-fg: 0 84% 60%; /* #EF4444 */
+    /* Semantic Colors */
+    --success: 129 82% 45%;   /* #39FF14 Neon Green */
+    --warning: 51 100% 50%;   /* #FFD700 Electric Gold */
 
-    --gradient-warm: linear-gradient(135deg, #FF6B47 0%, #FF9A7A 100%);
-    --gradient-trust: linear-gradient(135deg, #2D89EF 0%, #5BA4F5 100%);
+    --border: 216 28% 21%; /* rgba(255, 255, 255, 0.1) --glass-border */
+    --input: 216 28% 21%;
+    --ring: 182 100% 50%;
+
+    --radius: 1.5rem; /* 24px */
   }
 
-  .dark {
-    --background: 213 17% 10%;
-    --foreground: 210 25% 98%;
-    --card: 216 28% 12%;
-    --card-foreground: 210 25% 98%;
-    --popover: 213 17% 10%;
-    --popover-foreground: 210 25% 98%;
-    --primary: 212 86% 55%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 25% 27%;
-    --secondary-foreground: 210 25% 98%;
-    --muted: 215 25% 27%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 12 100% 64%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 25% 27%;
-    --input: 215 25% 27%;
-    --ring: 212 86% 55%;
-  }
+  /* No separate dark mode needed, the base theme is dark */
 }
 
 @layer base {
@@ -71,12 +50,93 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(at 20% 30%, rgba(45, 137, 239, 0.08) 0%, transparent 50%),
-                   radial-gradient(at 80% 70%, rgba(255, 107, 71, 0.06) 0%, transparent 50%);
+    background-image: radial-gradient(at 20% 30%, hsla(var(--primary)/0.15) 0px, transparent 50%),
+                   radial-gradient(at 80% 20%, hsla(var(--secondary)/0.15) 0px, transparent 50%),
+                   radial-gradient(at 50% 80%, hsla(var(--accent)/0.1) 0px, transparent 50%);
     background-attachment: fixed;
   }
-  .dark body {
-    background-image: radial-gradient(at 20% 30%, rgba(45, 137, 239, 0.15) 0%, transparent 50%),
-                   radial-gradient(at 80% 70%, rgba(255, 107, 71, 0.1) 0%, transparent 50%);
+
+  .glitch {
+    position: relative;
   }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    overflow: hidden;
+  }
+
+  .glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 hsl(var(--primary));
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  }
+
+  .glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 hsl(var(--secondary));
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+  }
+}
+
+
+@layer components {
+  .claim-card {
+    @apply relative overflow-hidden rounded-3xl border border-transparent bg-card/70 p-6 shadow-lg backdrop-blur-xl transition-all duration-300;
+    background-clip: padding-box;
+  }
+
+  .claim-card:hover {
+    @apply -translate-y-1 shadow-2xl;
+    box-shadow: 0 0 40px hsla(var(--primary) / 0.3);
+  }
+
+  .claim-card::before {
+    content: '';
+    @apply pointer-events-none absolute inset-0 rounded-3xl p-px;
+    background: linear-gradient(135deg, hsla(var(--primary) / 0.5), hsla(var(--secondary) / 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    @apply opacity-0 transition-opacity duration-300;
+  }
+
+  .claim-card:hover::before {
+    @apply opacity-100;
+    animation: rotate-gradient 3s linear infinite;
+  }
+}
+
+
+@keyframes rotate-gradient {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(12% 0 85% 0); }
+  20% { clip-path: inset(58% 0 13% 0); }
+  40% { clip-path: inset(36% 0 42% 0); }
+  60% { clip-path: inset(70% 0 5% 0); }
+  80% { clip-path: inset(95% 0 2% 0); }
+  100% { clip-path: inset(48% 0 48% 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(78% 0 2% 0); }
+  20% { clip-path: inset(5% 0 90% 0); }
+  40% { clip-path: inset(82% 0 1% 0); }
+  60% { clip-path: inset(42% 0 53% 0); }
+  80% { clip-path: inset(18% 0 78% 0); }
+  100% { clip-path: inset(92% 0 5% 0); }
 }

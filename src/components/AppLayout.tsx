@@ -18,14 +18,14 @@ function Header() {
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
   return (
-    <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 md:px-6">
+    <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b border-border/50 bg-background/50 backdrop-blur-lg px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/dashboard"
           className="flex items-center gap-2 text-lg font-semibold md:text-base font-headline"
         >
           <Logo className="h-7 w-7 text-primary" />
-          <span className="text-xl">ClaimFlow AI</span>
+          <span className="text-xl glitch" data-text="ClaimFlow">ClaimFlow</span>
         </Link>
         <Link
           href="/dashboard"
