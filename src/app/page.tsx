@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Logo from '@/components/Logo';
 
@@ -31,16 +31,14 @@ export default function LoginPage() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'agent@claimflow.ai',
+      password: 'password123',
     },
   });
 
   const heroImage = PlaceHolderImages.find(p => p.id === 'landing-hero');
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // In a real app, you'd handle authentication here.
-    // For this MVP, we'll just redirect to the dashboard.
     console.log(values);
     router.push('/dashboard');
   }
@@ -48,24 +46,25 @@ export default function LoginPage() {
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
       <div className="flex items-center justify-center p-6 sm:p-12">
-        <div className="mx-auto grid w-[350px] gap-6">
+        <div className="mx-auto grid w-[380px] gap-8">
           <div className="grid gap-2 text-center">
-            <div className="flex justify-center items-center gap-2 mb-4">
-              <Logo className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold font-headline">ClaimFlow AI</h1>
+            <div className="flex justify-center items-center gap-3 mb-4">
+              <Logo className="h-10 w-10 text-primary" />
+              <h1 className="text-4xl font-bold font-headline">ClaimFlow AI</h1>
             </div>
-            <p className="text-balance text-muted-foreground">
+            <p className="text-balance text-muted-foreground text-lg">
               Streamline your insurance claims with the power of AI.
             </p>
           </div>
           
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle>Sign In</CardTitle>
+              <CardTitle className="text-2xl font-headline">Sign In</CardTitle>
+              <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
                     control={form.control}
                     name="email"
@@ -84,7 +83,15 @@ export default function LoginPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                         <div className="flex items-center">
+                          <FormLabel>Password</FormLabel>
+                          <Link
+                            href="#"
+                            className="ml-auto inline-block text-sm underline"
+                          >
+                            Forgot your password?
+                          </Link>
+                        </div>
                         <FormControl>
                           <Input type="password" placeholder="••••••••" {...field} />
                         </FormControl>
@@ -92,14 +99,14 @@ export default function LoginPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" variant="primary" size="lg" className="w-full">
                     Login
                   </Button>
                 </form>
               </Form>
-              <div className="mt-4 text-center text-sm">
+              <div className="mt-6 text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <Link href="#" className="underline">
+                <Link href="#" className="underline font-semibold text-primary">
                   Sign up
                 </Link>
               </div>
@@ -115,8 +122,10 @@ export default function LoginPage() {
             data-ai-hint={heroImage.imageHint}
             fill
             className="object-cover"
+            priority
           />
         )}
+         <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
       </div>
     </div>
   );

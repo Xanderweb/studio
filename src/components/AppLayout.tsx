@@ -18,39 +18,35 @@ function Header() {
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/dashboard"
           className="flex items-center gap-2 text-lg font-semibold md:text-base font-headline"
         >
-          <Logo className="h-6 w-6" />
-          <span className="sr-only">ClaimFlow AI</span>
+          <Logo className="h-7 w-7 text-primary" />
+          <span className="text-xl">ClaimFlow AI</span>
         </Link>
         <Link
           href="/dashboard"
-          className="text-foreground transition-colors hover:text-foreground"
+          className="text-foreground/80 transition-colors hover:text-foreground font-semibold"
         >
           Dashboard
         </Link>
       </nav>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <div className="ml-auto flex-1 sm:flex-initial">
-          <Link href="/new-claim">
-            <Button>File a New Claim</Button>
-          </Link>
-        </div>
+        <div className="ml-auto flex-1 sm:flex-initial" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10">
               {userAvatar ? (
                  <Image
                     src={userAvatar.imageUrl}
                     alt={userAvatar.description}
                     data-ai-hint={userAvatar.imageHint}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-primary/50"
                   />
               ) : (
                 <span className="sr-only">Toggle user menu</span>

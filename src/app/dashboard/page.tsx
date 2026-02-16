@@ -1,33 +1,17 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { MoreHorizontal } from 'lucide-react';
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { mockClaims } from '@/lib/mock-data';
 import type { ClaimStatus } from '@/lib/types';
 
-const statusVariant: Record<ClaimStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-    'Approved': 'default',
-    'Pending': 'secondary',
-    'Under Review': 'outline',
+const statusVariant: Record<ClaimStatus, 'approved' | 'pending' | 'review' | 'destructive'> = {
+    'Approved': 'approved',
+    'Pending': 'pending',
+    'Under Review': 'review',
     'Rejected': 'destructive',
 };
 
@@ -38,69 +22,32 @@ export default function Dashboard() {
       <PageHeader
         title="Dashboard"
         description="Review your recent insurance claims."
-      />
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Claims</CardTitle>
-          <CardDescription>
-            An overview of all your submitted claims.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Claim ID</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Incident Date
-                </TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockClaims.map((claim) => (
-                <TableRow key={claim.id}>
-                  <TableCell className="font-medium">
-                    <Link href={`/claim/${claim.id}`} className="hover:underline">
-                      #{claim.id.split('_')[1]}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statusVariant[claim.status]}>{claim.status}</Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {claim.incidentDate ? format(claim.incidentDate, 'PPP') : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link href={`/claim/${claim.id}`}>View Details</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Contact Support</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      >
+        <Button variant="primary" size="lg" asChild>
+            <Link href="/new-claim">File a New Claim</Link>
+        </Button>
+      </PageHeader>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {mockClaims.map((claim) => (
+            <Card key={claim.id} className="bg-card/60 dark:bg-card/60 border-border/50 backdrop-blur-xl shadow-glass transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-hover h-full flex flex-col">
+              <CardHeader>
+                  <div className="flex justify-between items-start gap-2">
+                      <CardTitle className="text-lg font-semibold font-headline">Claim #{claim.id.split('_')[1]}</CardTitle>
+                      <Badge variant={statusVariant[claim.status]}>{claim.status}</Badge>
+                  </div>
+                  <CardDescription className="text-xs">{claim.incidentDate ? format(claim.incidentDate, 'PPP') : 'N/A'}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                  <p className="text-sm text-muted-foreground line-clamp-2">{claim.description}</p>
+              </CardContent>
+              <div className="p-6 pt-0">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href={`/claim/${claim.id}`}>View Details</Link>
+                  </Button>
+              </div>
+            </Card>
+        ))}
+      </div>
     </AppLayout>
   );
 }
