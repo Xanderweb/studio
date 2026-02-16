@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "landing-hero",
+      "description": "An abstract image representing technology and security for the landing page background.",
+      "imageUrl": "https://images.unsplash.com/photo-1770941979957-b68ce7960c01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhYnN0cmFjdCUyMHNlY3VyaXR5fGVufDB8fHx8MTc3MTE4NjMxM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract security"
+    },
+    {
+      "id": "user-avatar",
+      "description": "A placeholder for a user's avatar.",
+      "imageUrl": "https://images.unsplash.com/photo-1630910561339-4e22c7150093?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwZXJzb24lMjBhdmF0YXJ8ZW58MHx8fHwxNzcxMjIzODc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person avatar"
+    },
+    {
+      "id": "car-damage",
+      "description": "An image of a car with visible damage for claim analysis.",
+      "imageUrl": "https://images.unsplash.com/photo-1673187139211-1e7ec3dd60ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjYXIlMjBjcmFzaHxlbnwwfHx8fDE3NzEyMzgwODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car crash"
+    },
+    {
+      "id": "document-scan",
+      "description": "An image of a scanned document for OCR.",
+      "imageUrl": "https://images.unsplash.com/photo-1765868017260-6e22bbf96095?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZG9jdW1lbnQlMjBwYXBlcnxlbnwwfHx8fDE3NzExNTI5MzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "document paper"
+    }
+  ]
 }

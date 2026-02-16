@@ -1,0 +1,44 @@
+import type { Claim } from './types';
+
+export const mockClaims: Claim[] = [
+  {
+    id: 'clm_1a2b3c4d',
+    userId: 'usr_123',
+    description: 'Minor fender bender in a parking lot. Scratches on the rear bumper.',
+    incidentDate: new Date('2024-07-15T14:30:00Z'),
+    location: '123 Main St, Anytown, USA',
+    status: 'Approved',
+    riskScore: 15,
+    createdAt: new Date('2024-07-16T10:00:00Z'),
+  },
+  {
+    id: 'clm_5e6f7g8h',
+    userId: 'usr_123',
+    description: 'Collision at an intersection. Significant damage to the front-right side.',
+    incidentDate: new Date('2024-07-10T08:45:00Z'),
+    location: 'Elm St & Oak Ave, Anytown, USA',
+    status: 'Under Review',
+    riskScore: 65,
+    createdAt: new Date('2024-07-10T11:20:00Z'),
+  },
+  {
+    id: 'clm_9i0j1k2l',
+    userId: 'usr_123',
+    description: 'Windshield cracked by a rock on the highway.',
+    incidentDate: new Date('2024-06-28T17:00:00Z'),
+    location: 'I-95 Northbound, near Exit 15',
+    status: 'Approved',
+    riskScore: 5,
+    createdAt: new Date('2024-06-29T09:05:00Z'),
+  },
+  {
+    id: 'clm_3m4n5o6p',
+    userId: 'usr_123',
+    description: 'Vehicle was hit while parked overnight. Dent on driver-side door.',
+    incidentDate: new Date('2024-06-20T23:00:00Z'),
+    location: 'Apartment Complex Parking',
+    status: 'Rejected',
+    riskScore: 85,
+    createdAt: new Date('2024-06-25T16:45:00Z'),
+  },
+];
