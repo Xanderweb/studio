@@ -10,9 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['"Satoshi"', 'sans-serif'],
+        interface: ['"Satoshi"', 'sans-serif'],
         headline: ['"Syne"', 'sans-serif'],
-        code: ['"JetBrains Mono"', 'monospace'],
+        code: ['"Fira Code"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',

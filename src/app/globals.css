@@ -4,22 +4,58 @@
 
 @layer base {
   :root {
-    /* Base - Deep Space */
-    --background: 15 28% 6%; /* #0A0E27; */
-    --foreground: 220 14% 96%; /* #F8F9FF */
+    /* Light Mode */
+    --background: 230 100% 99%; /* #F8F9FF */
+    --foreground: 222 47% 11%; /* #111827 */
+
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 204 100% 50%; /* #0099FF */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 288 100% 50%; /* #CC00FF */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 14% 96%; /* #F1F5F9 */
+    --muted-foreground: 215 14% 34%; /* #475569 */
+
+    --accent: 204 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 145 63% 42%;
+    --warning: 45 93% 47%;
+
+    --border: 214 32% 91%; /* #E5E7EB */
+    --input: 214 32% 91%;
+    --ring: 204 100% 50%;
+
+    --radius: 1.5rem; /* 24px */
+  }
+
+  .dark {
+    /* Dark Mode - Cyber Luxury */
+    --background: 232 71% 11%; /* #0A0E27 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
     --card: 228 44% 16%; /* #151B3B */
-    --card-foreground: 220 14% 96%;
+    --card-foreground: 0 0% 100%;
 
     --popover: 228 44% 16%;
-    --popover-foreground: 220 14% 96%;
+    --popover-foreground: 0 0% 100%;
 
     /* Electric Accents */
     --primary: 182 100% 50%; /* #00F5FF Electric Cyan */
     --primary-foreground: 232 71% 11%; /* #0A0E27 */
 
     --secondary: 300 100% 50%; /* #FF00FF Electric Magenta */
-    --secondary-foreground: 220 14% 96%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 227 41% 21%; /* #1E2749 */
     --muted-foreground: 220 13% 65%; /* #A0AEC0 */
@@ -27,21 +63,17 @@
     --accent: 51 100% 50%; /* #FFD700 Electric Gold */
     --accent-foreground: 232 71% 11%;
 
-    --destructive: 339 100% 50%; /* #FF0055 Danger Red */
-    --destructive-foreground: 220 14% 96%;
+    --destructive: 350 100% 67%; /* #FF0055 Danger Red */
+    --destructive-foreground: 0 0% 100%;
 
     /* Semantic Colors */
-    --success: 129 82% 45%;   /* #39FF14 Neon Green */
+    --success: 139 100% 56%;   /* #39FF14 Neon Green */
     --warning: 51 100% 50%;   /* #FFD700 Electric Gold */
 
     --border: 216 28% 21%; /* rgba(255, 255, 255, 0.1) --glass-border */
     --input: 216 28% 21%;
     --ring: 182 100% 50%;
-
-    --radius: 1.5rem; /* 24px */
   }
-
-  /* No separate dark mode needed, the base theme is dark */
 }
 
 @layer base {
@@ -88,8 +120,10 @@
 
 @layer components {
   .claim-card {
-    @apply relative overflow-hidden rounded-3xl border border-transparent bg-card/70 p-6 shadow-lg backdrop-blur-xl transition-all duration-300;
-    background-clip: padding-box;
+    background: var(--glass-dark, rgba(21, 27, 59, 0.7));
+    @apply relative overflow-hidden rounded-3xl p-6 shadow-lg backdrop-blur-xl transition-all duration-300;
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+    box-shadow: var(--glass-glow, 0 8px 32px 0 rgba(0, 245, 255, 0.2));
   }
 
   .claim-card:hover {
@@ -100,7 +134,7 @@
   .claim-card::before {
     content: '';
     @apply pointer-events-none absolute inset-0 rounded-3xl p-px;
-    background: linear-gradient(135deg, hsla(var(--primary) / 0.5), hsla(var(--secondary) / 0.5));
+    background: var(--holo-gradient, linear-gradient(135deg, #00F5FF, #FF00FF));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
