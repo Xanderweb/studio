@@ -3,6 +3,7 @@
 import { claimCoachChatbotGuidance } from '@/ai/flows/claim-coach-chatbot-guidance-flow';
 import { claimGuardFraudExplanation } from '@/ai/flows/claim-guard-fraud-explanation.ts';
 import { snapClaimDamageSummary } from '@/ai/flows/snap-claim-damage-summary';
+import { transcribeAudio } from '@/ai/flows/transcribe-audio-flow';
 import type { RiskLevel } from './types';
 
 // Helper to convert file to data URI
@@ -75,4 +76,20 @@ export async function getChatbotResponse(
         console.error('Error in getChatbotResponse server action:', error);
         return { error: 'Failed to get chatbot response.' };
     }
+}
+
+export async function transcribeAudioAction(formData: FormData) {
+  const audio = formData.get('audio') as File;
+  if (!audio) {
+    throw new Error('No audio file provided.');
+  }
+
+  try {
+    const audioDataUri = await fileToDataURI(audio);
+    const result = await transcribeAudio({ audioDataUri });
+    return result;
+  } catch (error) {
+    console.error('Error in transcribeAudioAction server action:', error);
+    return { error: 'Failed to transcribe audio. Please try again.' };
+  }
 }

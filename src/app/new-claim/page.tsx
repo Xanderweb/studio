@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Bot, FileText, Image as ImageIcon, Send, Sparkles, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bot, FileText, Image as ImageIcon, Send, Sparkles, Upload, Mic, Square, Loader2 } from 'lucide-react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,7 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { analyzeDamage, getChatbotResponse } from '@/lib/actions';
+import { analyzeDamage, getChatbotResponse, transcribeAudioAction } from '@/lib/actions';
 import type { DamageAnalysis, FullClaimDetails, ClaimStatus } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -61,6 +61,11 @@ export default function NewClaimPage() {
   const [chatInput, setChatInput] = useState('');
   const [isChatting, setIsChatting] = useState(false);
 
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
 
   const form = useForm({
     resolver: zodResolver(currentStep === 0 ? incidentDetailsSchema : evidenceSchema),
@@ -76,6 +81,61 @@ export default function NewClaimPage() {
 
   const photos = useFieldArray({ control: form.control, name: 'photos' });
   const documents = useFieldArray({ control: form.control, name: 'documents' });
+
+  const startRecording = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        setMediaRecorder(recorder);
+        recorder.ondataavailable = (e) => {
+            setAudioChunks(prev => [...prev, e.data]);
+        };
+        recorder.start();
+        setIsRecording(true);
+        setAudioChunks([]);
+    } catch (err) {
+        toast({
+            variant: 'destructive',
+            title: 'Microphone access denied',
+            description: 'Please enable microphone access in your browser settings.',
+        });
+    }
+  };
+
+  const stopRecording = () => {
+      if (mediaRecorder) {
+          mediaRecorder.stop();
+          mediaRecorder.stream.getTracks().forEach(track => track.stop());
+          setIsRecording(false);
+      }
+  };
+
+  useEffect(() => {
+      if (!isRecording && audioChunks.length > 0) {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          handleTranscription(audioBlob);
+      }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioChunks, isRecording]);
+
+  const handleTranscription = async (audioBlob: Blob) => {
+      setIsTranscribing(true);
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      
+      try {
+          const result = await transcribeAudioAction(formData);
+          if ('error' in result) throw new Error(result.error);
+          const currentDescription = form.getValues('description');
+          form.setValue('description', (currentDescription ? currentDescription + ' ' : '') + result.transcript, { shouldValidate: true });
+          toast({ title: '✅ Transcription Complete', description: 'Your voice note has been added to the description.' });
+      } catch (error) {
+          toast({ variant: 'destructive', title: '❌ Transcription Failed', description: error instanceof Error ? error.message : "An unknown error occurred." });
+      } finally {
+          setIsTranscribing(false);
+          setAudioChunks([]);
+      }
+  };
 
   const handleNext = async () => {
     const isStepValid = await form.trigger(STEPS[currentStep].fields as any);
@@ -106,7 +166,7 @@ export default function NewClaimPage() {
 
   const handlePrev = () => {
     if (currentStep > 0) {
-      setCurrentStep(step => step - 1);
+      setCurrentStep(step => step + 1);
     }
   };
   
@@ -183,9 +243,23 @@ export default function NewClaimPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Incident Description</FormLabel>
-                            <FormControl>
-                              <Textarea placeholder="Describe the incident in detail..." rows={5} {...field} />
-                            </FormControl>
+                              <div className="relative">
+                                <FormControl>
+                                  <Textarea placeholder="Describe the incident in detail, or use your voice..." rows={5} {...field} />
+                                </FormControl>
+                                <div className="absolute bottom-2 right-2">
+                                    <Button
+                                        type="button"
+                                        size="icon"
+                                        variant={isRecording ? "destructive" : "outline"}
+                                        onClick={isRecording ? stopRecording : startRecording}
+                                        disabled={isTranscribing}
+                                    >
+                                        {isTranscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                                        <span className="sr-only">{isTranscribing ? "Transcribing..." : isRecording ? "Stop recording" : "Start recording"}</span>
+                                    </Button>
+                                </div>
+                              </div>
                             <FormMessage />
                           </FormItem>
                         )}

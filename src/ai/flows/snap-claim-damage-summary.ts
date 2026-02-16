@@ -80,7 +80,7 @@ const snapClaimDamageSummaryFlow = ai.defineFlow(
 
     const { output } = await ai.generate({
       prompt: promptParts,
-      model: 'googleai/gemini-pro-vision',
+      model: 'googleai/gemini-1.5-flash-latest',
       output: { schema: SnapClaimDamageSummaryOutputSchema },
       config: {
         safetySettings: [
