@@ -31,7 +31,7 @@ const SnapClaimDamageSummaryOutputSchema = z.object({
   damageSummary: z
     .string()
     .describe(
-      'A detailed, concise summary of the detected damage to the vehicle, including affected parts and a brief description of the damage to each. If no damage is visible, state "No visible damage detected."
+      'A detailed, concise summary of the detected damage to the vehicle, including affected parts and a brief description of the damage to each. If no damage is visible, state "No visible damage detected."'
     ),
   estimatedSeverity: z
     .enum(['Minor', 'Moderate', 'Severe', 'Totaled', 'Undetermined'])
