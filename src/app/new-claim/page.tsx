@@ -22,11 +22,14 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { analyzeDamage, getChatbotResponse, transcribeAudioAction } from '@/lib/actions';
-import type { DamageAnalysis, FullClaimDetails, ClaimStatus } from '@/lib/types';
+import type { DamageAnalysis, FullClaimDetails, ClaimStatus, ClaimType } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { CLAIM_TYPES } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const incidentDetailsSchema = z.object({
+  claimType: z.string({ required_error: 'Please select a claim type.' }),
   description: z.string().min(10, { message: 'Please provide a detailed description.' }),
   incidentDate: z.date({ required_error: 'An incident date is required.' }),
   location: z.string().min(3, { message: 'Please provide a location.' }),
@@ -43,7 +46,7 @@ type ChatMessage = {
 };
 
 const STEPS = [
-  { id: '01', name: 'Incident Details', fields: ['description', 'incidentDate', 'location'] },
+  { id: '01', name: 'Claim Details', fields: ['claimType', 'description', 'incidentDate', 'location'] },
   { id: '02', name: 'Upload Evidence', fields: ['photos', 'documents'] },
   { id: '03', name: 'AI Assistant', fields: [] },
   { id: '04', name: 'Review & Submit', fields: [] },
@@ -66,11 +69,11 @@ export default function NewClaimPage() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
-
   const form = useForm({
     resolver: zodResolver(currentStep === 0 ? incidentDetailsSchema : evidenceSchema),
     mode: 'onChange',
     defaultValues: {
+      claimType: undefined,
       description: '',
       incidentDate: undefined,
       location: '',
@@ -166,7 +169,7 @@ export default function NewClaimPage() {
 
   const handlePrev = () => {
     if (currentStep > 0) {
-      setCurrentStep(step => step + 1);
+      setCurrentStep(step => step - 1);
     }
   };
   
@@ -197,6 +200,7 @@ export default function NewClaimPage() {
     const claimId = `claim-${Date.now()}`;
     const claimData: FullClaimDetails = {
         id: claimId,
+        claimType: values.claimType as ClaimType,
         incidentDetails: {
             description: values.description,
             incidentDate: values.incidentDate,
@@ -231,31 +235,60 @@ export default function NewClaimPage() {
         <Form {...form}>
             <form>
                 {currentStep === 0 && (
-                  <Card>
+                  <Card className="holographic-card">
                     <CardHeader>
-                      <CardTitle>Step 1: Incident Details</CardTitle>
+                      <CardTitle>Step 1: Claim Details</CardTitle>
                       <CardDescription>Tell us about what happened.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="claimType"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <div className="relative">
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger className="peer">
+                                                <SelectValue placeholder=" " />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {CLAIM_TYPES.map(type => (
+                                                <SelectItem key={type.name} value={type.name}>{type.name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Label htmlFor="claimType" className="absolute text-sm text-text-secondary duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-electric-cyan peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Type of Insurance Claim
+                                    </Label>
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                        <FormField
                         control={form.control}
                         name="description"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Incident Description</FormLabel>
-                              <div className="relative">
+                             <div className="relative">
                                 <FormControl>
-                                  <Textarea placeholder="Describe the incident in detail, or use your voice..." rows={5} {...field} />
+                                  <Textarea placeholder=" " rows={5} {...field} />
                                 </FormControl>
-                                <div className="absolute bottom-2 right-2">
+                                <Label htmlFor="description" className="absolute text-sm text-text-secondary duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-electric-cyan peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                  Incident Description
+                                </Label>
+                                <div className="absolute bottom-2 right-2 flex gap-2">
                                     <Button
                                         type="button"
                                         size="icon"
-                                        variant={isRecording ? "destructive" : "outline"}
+                                        variant={isRecording ? "destructive" : "ghost"}
+                                        className='w-10 h-10 rounded-full border border-glass-border bg-glass-dark/50 hover:bg-electric-cyan/20'
                                         onClick={isRecording ? stopRecording : startRecording}
                                         disabled={isTranscribing}
                                     >
-                                        {isTranscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                                        {isTranscribing ? <Loader2 className="h-5 w-5 animate-spin text-electric-cyan" /> : isRecording ? <Square className="h-5 w-5 text-danger-red" /> : <Mic className="h-5 w-5 text-electric-cyan" />}
                                         <span className="sr-only">{isTranscribing ? "Transcribing..." : isRecording ? "Stop recording" : "Start recording"}</span>
                                     </Button>
                                 </div>
@@ -264,33 +297,32 @@ export default function NewClaimPage() {
                           </FormItem>
                         )}
                       />
-                      <div className="grid md:grid-cols-2 gap-4">
+                      <div className="grid md:grid-cols-2 gap-8">
                         <FormField
                             control={form.control}
                             name="incidentDate"
                             render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>Date of Incident</FormLabel>
+                            <FormItem>
+                                 <div className="relative">
                                 <Popover>
                                 <PopoverTrigger asChild>
                                     <FormControl>
-                                    <Button
-                                        variant={"outline"}
+                                    <button
                                         className={cn(
-                                        "w-full pl-3 text-left font-normal",
-                                        !field.value && "text-muted-foreground"
+                                        "peer block w-full appearance-none rounded-none border-b-2 border-glass-border bg-transparent px-0 py-2.5 text-left text-base text-text-primary focus:border-electric-cyan focus:outline-none focus:ring-0",
+                                        !field.value && "text-text-secondary"
                                         )}
                                     >
                                         {field.value ? (
                                         format(field.value, "PPP")
                                         ) : (
-                                        <span>Pick a date</span>
+                                        <span></span>
                                         )}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
+                                        <CalendarIcon className="absolute right-0 top-3 h-5 w-5 opacity-50" />
+                                    </button>
                                     </FormControl>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent className="w-auto p-0 bg-bg-secondary border-glass-border" align="start">
                                     <Calendar
                                     mode="single"
                                     selected={field.value}
@@ -302,6 +334,10 @@ export default function NewClaimPage() {
                                     />
                                 </PopoverContent>
                                 </Popover>
+                                 <Label htmlFor="incidentDate" className="absolute text-sm text-text-secondary duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-electric-cyan peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                    Date of Incident
+                                </Label>
+                                </div>
                                 <FormMessage />
                             </FormItem>
                             )}
@@ -311,10 +347,14 @@ export default function NewClaimPage() {
                             name="location"
                             render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Location of Incident</FormLabel>
+                                <div className="relative">
                                 <FormControl>
-                                <Input placeholder="e.g., 123 Main St, Anytown" {...field} />
+                                <Input placeholder=" " {...field} />
                                 </FormControl>
+                                 <Label htmlFor="location" className="absolute text-sm text-text-secondary duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-electric-cyan peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                    Location of Incident
+                                </Label>
+                                </div>
                                 <FormMessage />
                             </FormItem>
                             )}
@@ -326,7 +366,7 @@ export default function NewClaimPage() {
 
                 {currentStep === 1 && (
                     <div className="grid md:grid-cols-2 gap-6">
-                        <Card>
+                        <Card className="holographic-card">
                             <CardHeader>
                                 <CardTitle>Upload Photos</CardTitle>
                                 <CardDescription>Upload clear photos of the damage. At least one is required.</CardDescription>
@@ -334,13 +374,13 @@ export default function NewClaimPage() {
                             <CardContent>
                                 <FileUploader
                                     fieldArray={photos}
-                                    icon={<ImageIcon className="h-8 w-8 text-muted-foreground" />}
+                                    icon={<ImageIcon className="h-8 w-8 text-electric-cyan" />}
                                     accept="image/*"
                                 />
                                 <FormMessage>{form.formState.errors.photos?.message}</FormMessage>
                             </CardContent>
                         </Card>
-                         <Card>
+                         <Card className="holographic-card">
                             <CardHeader>
                                 <CardTitle>Upload Documents</CardTitle>
                                 <CardDescription>Optional: Add supporting documents like a police report.</CardDescription>
@@ -348,7 +388,7 @@ export default function NewClaimPage() {
                             <CardContent>
                                 <FileUploader
                                     fieldArray={documents}
-                                    icon={<FileText className="h-8 w-8 text-muted-foreground" />}
+                                    icon={<FileText className="h-8 w-8 text-electric-cyan" />}
                                     accept=".pdf,.doc,.docx"
                                 />
                             </CardContent>
@@ -357,42 +397,44 @@ export default function NewClaimPage() {
                 )}
                 
                 {currentStep === 2 && (
-                    <Card>
+                    <Card className="holographic-card">
                         <CardHeader>
                             <CardTitle>Step 3: AI Assistant (ClaimCoach)</CardTitle>
                             <CardDescription>Chat with our AI to ensure you have all necessary information.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="border rounded-lg h-[500px] flex flex-col">
+                            <div className="border rounded-lg h-[500px] flex flex-col bg-glass-dark border-glass-border">
                                 <ScrollArea className="flex-1 p-4">
-                                    <div className="space-y-4">
+                                    <div className="space-y-6">
                                     {chatHistory.map((msg, i) => (
-                                        <div key={i} className={cn("flex items-start gap-3", msg.role === 'user' && 'justify-end')}>
-                                            {msg.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="h-5 w-5 text-primary"/></div>}
-                                            <div className={cn("max-w-[75%] rounded-lg p-3 text-sm", msg.role === 'model' ? 'bg-muted' : 'bg-primary text-primary-foreground')}>
-                                                {msg.content}
+                                        <div key={i} className={cn("flex items-start gap-3 w-full", msg.role === 'user' && 'justify-end')}>
+                                            {msg.role === 'model' && <div className="p-2 bg-bg-tertiary rounded-full border border-glass-border"><Bot className="h-5 w-5 text-electric-cyan"/></div>}
+                                            <div className={cn("max-w-[80%] rounded-xl p-4 text-sm", msg.role === 'model' ? 'bg-bg-secondary border border-glass-border message-ai' : 'message-user')}>
+                                                <p>{msg.content}</p>
                                             </div>
+                                             {msg.role === 'user' && <div className="p-2 bg-bg-tertiary rounded-full border border-glass-border"><User className="h-5 w-5 text-electric-magenta"/></div>}
                                         </div>
                                     ))}
                                     {isChatting && (
                                         <div className="flex items-start gap-3">
-                                            <div className="p-2 bg-primary/10 rounded-full"><Bot className="h-5 w-5 text-primary"/></div>
-                                            <div className="bg-muted rounded-lg p-3 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-                                                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-                                                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse"></div>
-                                                </div>
+                                            <div className="p-2 bg-bg-tertiary rounded-full border border-glass-border"><Bot className="h-5 w-5 text-electric-cyan"/></div>
+                                            <div className="bg-bg-secondary border border-glass-border rounded-lg p-4 text-sm typing-indicator">
+                                                <div className="typing-dot"></div><div className="typing-dot"></div><div className="typing-dot"></div>
                                             </div>
                                         </div>
                                     )}
                                     </div>
                                 </ScrollArea>
-                                <div className="border-t p-2">
-                                    <form onSubmit={handleChatSubmit} className="flex gap-2">
-                                        <Input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Ask a question or provide more details..." disabled={isChatting}/>
-                                        <Button type="submit" size="icon" disabled={!chatInput.trim() || isChatting}>
-                                            <Send className="h-4 w-4"/>
+                                <div className="border-t border-glass-border p-4">
+                                    <form onSubmit={handleChatSubmit} className="flex gap-4 items-center">
+                                         <div className="relative w-full">
+                                             <Input id="chat-input" value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder=" " disabled={isChatting} className="peer pr-12" />
+                                              <Label htmlFor="chat-input" className="absolute text-sm text-text-secondary duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-electric-cyan peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                                Ask a question...
+                                            </Label>
+                                         </div>
+                                        <Button type="submit" size="icon" variant="magnetic" className="w-12 h-12 rounded-full flex-shrink-0" disabled={!chatInput.trim() || isChatting}>
+                                            <Send className="h-5 w-5"/>
                                         </Button>
                                     </form>
                                 </div>
@@ -402,36 +444,39 @@ export default function NewClaimPage() {
                 )}
 
                 {currentStep === 3 && (
-                    <Card>
+                    <Card className="holographic-card">
                         <CardHeader>
                             <CardTitle>Step 4: Review & Submit</CardTitle>
                             <CardDescription>Please review all information before submitting your claim.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-6 text-text-secondary">
                             <div>
-                                <h3 className="font-semibold mb-2">Incident Details</h3>
-                                <div className="text-sm space-y-1 text-muted-foreground">
-                                    <p><strong className="text-foreground">Date:</strong> {form.getValues('incidentDate') ? format(form.getValues('incidentDate')!, 'PPP') : 'N/A'}</p>
-                                    <p><strong className="text-foreground">Location:</strong> {form.getValues('location')}</p>
-                                    <p><strong className="text-foreground">Description:</strong> {form.getValues('description')}</p>
+                                <h3 className="font-headline text-lg font-semibold mb-2 text-text-primary">Claim Details</h3>
+                                <div className="space-y-2 text-sm">
+                                    <p><strong className="text-text-primary font-medium">Claim Type:</strong> {form.getValues('claimType')}</p>
+                                    <p><strong className="text-text-primary font-medium">Date:</strong> {form.getValues('incidentDate') ? format(form.getValues('incidentDate')!, 'PPP') : 'N/A'}</p>
+                                    <p><strong className="text-text-primary font-medium">Location:</strong> {form.getValues('location')}</p>
+                                    <p className="whitespace-pre-wrap"><strong className="text-text-primary font-medium">Description:</strong> {form.getValues('description')}</p>
                                 </div>
                             </div>
+                            <Separator className="bg-glass-border" />
                             <div>
-                                <h3 className="font-semibold mb-2">Evidence</h3>
-                                <ul className="text-sm list-disc pl-5 text-muted-foreground">
+                                <h3 className="font-headline text-lg font-semibold mb-2 text-text-primary">Evidence</h3>
+                                <ul className="text-sm list-disc pl-5 space-y-1">
                                     <li>{form.getValues('photos').length} photo(s) uploaded.</li>
                                     <li>{form.getValues('documents').length} document(s) uploaded.</li>
                                 </ul>
                             </div>
+                             <Separator className="bg-glass-border" />
                             <div>
-                                <h3 className="font-semibold mb-2 flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" />AI Damage Analysis</h3>
-                                {isAnalyzing ? <p className="text-sm text-muted-foreground">Analyzing images...</p> : (
+                                <h3 className="font-headline text-lg font-semibold mb-2 flex items-center gap-2 text-text-primary"><Sparkles className="h-5 w-5 text-electric-cyan" />AI Damage Analysis</h3>
+                                {isAnalyzing ? <p className="text-sm">Analyzing images...</p> : (
                                     damageAnalysis ? (
-                                        <div className="text-sm space-y-1 text-muted-foreground">
-                                            <p><strong className="text-foreground">Severity:</strong> {damageAnalysis.estimatedSeverity}</p>
-                                            <p><strong className="text-foreground">Summary:</strong> {damageAnalysis.damageSummary}</p>
+                                        <div className="text-sm space-y-1">
+                                            <p><strong className="text-text-primary font-medium">Severity:</strong> {damageAnalysis.estimatedSeverity}</p>
+                                            <p><strong className="text-text-primary font-medium">Summary:</strong> {damageAnalysis.damageSummary}</p>
                                         </div>
-                                    ) : <p className="text-sm text-muted-foreground">No analysis performed yet.</p>
+                                    ) : <p className="text-sm">No analysis performed yet.</p>
                                 )}
                             </div>
                         </CardContent>
@@ -440,16 +485,16 @@ export default function NewClaimPage() {
             </form>
         </Form>
         
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center mt-4">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 0}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Previous
           </Button>
           {currentStep < STEPS.length - 1 ? (
-            <Button onClick={handleNext} disabled={isAnalyzing}>
+            <Button onClick={handleNext} variant="magnetic" disabled={isAnalyzing}>
               {isAnalyzing ? "Analyzing..." : "Next"} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button onClick={onSubmit}>
+            <Button onClick={onSubmit} variant="magnetic">
               <Upload className="mr-2 h-4 w-4" /> Submit Claim
             </Button>
           )}
