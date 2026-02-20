@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ThemeToggle } from './ThemeToggle';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeft, Bot, LayoutDashboard, PlusCircle } from 'lucide-react';
 
 function Header() {
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -31,9 +31,24 @@ function Header() {
         </Link>
         <Link
           href="/dashboard"
-          className="text-text-secondary transition-colors hover:text-text-primary font-semibold"
+          className="text-text-secondary transition-colors hover:text-electric-cyan font-semibold flex items-center gap-2"
         >
+          <LayoutDashboard className="h-4 w-4" />
           Dashboard
+        </Link>
+         <Link
+          href="/new-claim"
+          className="text-text-secondary transition-colors hover:text-electric-cyan font-semibold flex items-center gap-2"
+        >
+          <PlusCircle className="h-4 w-4" />
+          New Claim
+        </Link>
+         <Link
+          href="/claim-status"
+          className="text-text-secondary transition-colors hover:text-electric-cyan font-semibold flex items-center gap-2"
+        >
+          <Bot className="h-4 w-4" />
+          Check Status
         </Link>
       </nav>
       <Button variant="ghost" size="icon" className="md:hidden">

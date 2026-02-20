@@ -2,6 +2,7 @@
 
 import { claimCoachChatbotGuidance } from '@/ai/flows/claim-coach-chatbot-guidance-flow';
 import { claimGuardFraudExplanation } from '@/ai/flows/claim-guard-fraud-explanation.ts';
+import { claimStatusChatbot } from '@/ai/flows/claim-status-chatbot-flow';
 import { snapClaimDamageSummary } from '@/ai/flows/snap-claim-damage-summary';
 import { transcribeAudio } from '@/ai/flows/transcribe-audio-flow';
 import type { RiskLevel } from './types';
@@ -77,6 +78,25 @@ export async function getChatbotResponse(
         return { error: 'Failed to get chatbot response.' };
     }
 }
+
+export async function getClaimStatusChatbotResponse(
+    claimId: string,
+    conversationHistory: { role: 'user' | 'model'; content: string }[],
+    userMessage: string
+) {
+    try {
+        const result = await claimStatusChatbot({
+            claimId,
+            conversationHistory,
+            userMessage,
+        });
+        return result;
+    } catch (error) {
+        console.error('Error in getClaimStatusChatbotResponse server action:', error);
+        return { error: 'Failed to get chatbot response.' };
+    }
+}
+
 
 export async function transcribeAudioAction(formData: FormData) {
   const audio = formData.get('audio') as File;
